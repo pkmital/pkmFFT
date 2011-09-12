@@ -78,7 +78,24 @@ public:
 		
 		// fft constructor
 		FFT = new pkmFFT(fftSize);
+		
+		numWindows = fftSize / hopSize + 1;
 	}
+	
+	int getNumWindows(int bufSize)
+	{
+		int padBufferSize;
+		int padding = ceilf((float)bufSize/(float)fftSize) * fftSize - bufSize;
+		if (padding) {
+			padBufferSize = bufSize + padding;
+		}
+		else {
+			padBufferSize = bufSize;
+		}
+		int numWindows = (padBufferSize - fftSize)/hopSize + 1;
+		return numWindows;
+	}
+		
 	
 	void STFT(float *buf, int bufSize, pkm::Mat &M_magnitudes, pkm::Mat &M_phases)
 	{	
@@ -127,6 +144,16 @@ public:
 		if (padding) {
 			free(padBuf);
 		}
+	}
+	
+	int getBins()
+	{
+		return fftBins;
+	}
+	
+	int getWindows()
+	{
+		return numWindows;
 	}
 	
 	

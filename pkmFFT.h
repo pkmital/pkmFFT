@@ -108,13 +108,19 @@ public:
 	void forward(int start, 
 				 float *buffer, 
 				 float *magnitude, 
-				 float *phase)
+				 float *phase, 
+                 bool doWindow = true)
 	{	
-		//multiply by window
-		vDSP_vmul(buffer, 1, window, 1, in_real, 1, fftSize);
-		
-		//convert to split complex format with evens in real and odds in imag
-		vDSP_ctoz((COMPLEX *) in_real, 2, &split_data, 1, fftSizeOver2);
+        if (doWindow) {
+            //multiply by window
+            vDSP_vmul(buffer, 1, window, 1, in_real, 1, fftSize);
+        }
+        else {
+            cblas_scopy(fftSize, buffer, 1, in_real, 1);
+        }
+        
+        //convert to split complex format with evens in real and odds in imag
+        vDSP_ctoz((COMPLEX *) in_real, 2, &split_data, 1, fftSizeOver2);
 		
 		//calc fft
 		vDSP_fft_zrip(fftSetup, &split_data, 1, log2n, FFT_FORWARD);
@@ -173,6 +179,10 @@ public:
 				*p++ += out_real[i] * window[i];
 			}
 		}
+        else {
+            cblas_scopy(fftSize, out_real, 1, buffer+start, 1);
+        }
+
 	}
 	
 	
