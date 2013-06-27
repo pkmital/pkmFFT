@@ -89,7 +89,7 @@
  *  pkmSTFT *stft;
  *  stft = new pkmSTFT(512);
  *  stft.STFT(sample_data, buffer_size, magnitude_matrix, phase_matrix);
- *  fft.ISTFT(sample_data, buffer_size, magnitude_matrix, phase_matrix);
+ *  stft.ISTFT(sample_data, buffer_size, magnitude_matrix, phase_matrix);
  *  delete stft;
  *
  */
@@ -103,12 +103,16 @@ class pkmSTFT
 {
 public:
 
-	pkmSTFT(int size)
+	pkmSTFT(int size, int hop = 0)
 	{
 		fftSize = size;
 		numFFTs = 0;
 		fftBins = fftSize/2;
-		hopSize = fftSize/4;
+        if (hop == 0) {
+            hopSize = fftSize/4;
+        }
+        else
+            hopSize = hop;
 		windowSize = fftSize;
 		bufferSize = 0;
 		
@@ -153,7 +157,7 @@ public:
 		int shift = padding / 2;
 		float *padBuf;
 		if (padding) {
-			printf("Padding %d sample buffer with %d samples\n", bufSize, padding);
+			//printf("Padding %d sample buffer with %d samples\n", bufSize, padding);
 			padBufferSize = bufSize + padding;
 			padBuf = (float *)malloc(sizeof(float)*padBufferSize);
 			// set padding to 0
@@ -213,7 +217,7 @@ public:
 		float *padBuf;
 		if (padding) 
 		{
-			printf("Padding %d sample buffer with %d samples\n", bufSize, padding);
+			//printf("Padding %d sample buffer with %d samples\n", bufSize, padding);
 			padBufferSize = bufSize + padding;
 			padBuf = (float *)malloc(padBufferSize*sizeof(float));
 			vDSP_vclr(padBuf, 1, padBufferSize);
