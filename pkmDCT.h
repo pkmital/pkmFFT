@@ -92,6 +92,7 @@ public:
     {
         bAllocated = false;
     }
+    
     ~pkmDCT()
     {
         if (bAllocated) {
@@ -105,7 +106,7 @@ public:
         }
     }
     
-    // must be power of 2!
+    // zero-pad to power of two...
     void setup(int size = 4096) 
     {     
         fftSize = size;
@@ -123,8 +124,7 @@ public:
             dctCorrectionFactors[2*i+1] = sinf( ( M_PI * (dctSize - 0.5) * i ) / dctSize ) / sqrtf(dctSize * 8.0);
         }
         dctCorrectionFactors[0] = dctCorrectionFactors[0] / sqrtf(2.0);
-        dctCorrectionFactors[1] = dctCorrectionFactors[1] / sqrtf(2.0); //although this one is always 0 :)
-        
+        dctCorrectionFactors[1] = dctCorrectionFactors[1] / sqrtf(2.0); 
         
         mirroredData = (float *)malloc(sizeof(float) * fftSize);
         complexData = (DSPSplitComplex*)calloc(1, sizeof(DSPSplitComplex));
@@ -138,7 +138,7 @@ public:
     void dctII_1D(float *input, float *result, int numCoefficients = -1) 
     {   
         if (!bAllocated) {
-            cerr << "[ERROR] Not allocated! Call setup(int size); first!" << endl;
+            cerr << "[ERROR]::pkmDCT::dctII_1D(...):: Not allocated! Call setup(int size); first!" << endl;
             return;
         }
         
