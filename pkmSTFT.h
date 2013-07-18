@@ -162,7 +162,8 @@ public:
 			padBuf = (float *)malloc(sizeof(float)*padBufferSize);
 			// set padding to 0
 			//memset(&(padBuf[bufSize]), 0, sizeof(float)*padding);
-			vDSP_vclr(padBuf + bufSize, 1, padding);
+			vDSP_vclr(padBuf, 1, shift);
+			vDSP_vclr(padBuf + bufSize + shift, 1, shift);
 			// copy original buffer into padded one
 			//memcpy(padBuf, buf, sizeof(float)*bufSize);	
 		
